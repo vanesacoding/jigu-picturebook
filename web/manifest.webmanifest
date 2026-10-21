@@ -1,0 +1,12 @@
+{
+  "name": "叽咕插画",
+  "short_name": "叽咕插画",
+  "description": "把宝宝真实成长中的小小瞬间，做成一本温暖的手绘故事书。",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#FBF7F0",
+  "theme_color": "#FBF7F0",
+  "lang": "zh-CN",
+  "orientation": "portrait"
+}

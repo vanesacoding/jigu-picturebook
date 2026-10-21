@@ -1,0 +1,18 @@
+# 本地数据：照片、作品、数据库、Key，全部不进仓库
+data/
+.env
+.env.local
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+
+# 系统与编辑器
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.log

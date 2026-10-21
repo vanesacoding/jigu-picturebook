@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>叽咕插画 · 把今天的小故事，画下来</title>
+<meta name="description" content="上传宝宝照片，说一句今天发生了什么，几分钟做一本属于宝宝的成长小书。私有自用的 V0。" />
+<style>
+  :root {
+    --paper: #fbf6ec;
+    --card: #fffdf8;
+    --ink: #3e3730;
+    --ink-soft: #6f655a;
+    --muted: #9c9084;
+    --line: #e9dfcd;
+    --accent: #c9793f;
+    --apricot: #f6e5cf;
+    --mist: #dfe8ea;
+    --grass: #dfe8d8;
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+    font-size: 16px;
+    line-height: 1.85;
+  }
+  .wrap { max-width: 720px; margin: 0 auto; padding: 0 24px 96px; }
+  h1, h2, h3 { font-family: "Songti SC", "Noto Serif SC", "SimSun", Georgia, serif; font-weight: 600; letter-spacing: 0.02em; }
+
+  header.hero { padding: 96px 0 56px; }
+  .tag {
+    display: inline-block; font-size: 12px; letter-spacing: 0.16em; color: var(--muted);
+    border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px; background: var(--card);
+  }
+  .hero h1 { font-size: clamp(34px, 9vw, 46px); line-height: 1.25; margin: 28px 0 18px; }
+  .hero p.sub { font-size: 17px; color: var(--ink-soft); margin: 0; max-width: 30em; }
+  .rule { height: 1px; background: var(--line); margin: 40px 0 0; }
+
+  .mock-row { display: flex; gap: 14px; margin: 44px 0 8px; }
+  .mock {
+    flex: 1; aspect-ratio: 3 / 4; border-radius: 14px; background: var(--card);
+    border: 1px solid var(--line); padding: 9px; display: flex; flex-direction: column; gap: 6px;
+    box-shadow: 0 10px 24px rgba(122, 104, 86, 0.07);
+  }
+  .mock .art {
+    flex: 1; border-radius: 8px; position: relative; overflow: hidden;
+    background:
+      radial-gradient(circle at 50% 32%, #e6d1c0 0 16%, transparent 17%),
+      linear-gradient(180deg, var(--apricot) 0%, #f3e9d9 62%, #eee3d2 100%);
+  }
+  .mock:nth-child(3) .art { background: linear-gradient(180deg, var(--mist) 0%, #eef1ee 100%); }
+  .mock:nth-child(4) .art { background: linear-gradient(180deg, var(--grass) 0%, #f0f0e6 100%); }
+  .mock .art::after {
+    content: ""; position: absolute; left: 12%; right: 12%; bottom: 12%;
+    height: 26%; border-radius: 40% 40% 12% 12%; background: rgba(255, 255, 255, 0.55);
+  }
+  .mock .cap { height: 4px; border-radius: 2px; background: #e3d8c7; }
+  .mock .cap.short { width: 62%; }
+
+  section { padding-top: 56px; }
+  h2 { font-size: 22px; margin: 0 0 8px; }
+  .kicker { font-size: 12px; letter-spacing: 0.18em; color: var(--muted); margin-bottom: 10px; text-transform: uppercase; }
+  p { margin: 12px 0; color: var(--ink-soft); }
+  strong { color: var(--ink); font-weight: 600; }
+
+  ol.steps { counter-reset: s; list-style: none; padding: 0; margin: 20px 0 0; }
+  ol.steps li { counter-increment: s; position: relative; padding: 16px 0 16px 46px; border-top: 1px solid var(--line); }
+  ol.steps li:last-child { border-bottom: 1px solid var(--line); }
+  ol.steps li::before {
+    content: counter(s); position: absolute; left: 0; top: 16px; width: 26px; height: 26px;
+    border-radius: 50%; background: var(--apricot); color: #8a5c33; font-size: 13px;
+    display: grid; place-items: center;
+  }
+  ol.steps b { display: block; color: var(--ink); font-weight: 600; margin-bottom: 2px; }
+  ol.steps span { color: var(--ink-soft); font-size: 15px; }
+
+  .grid { display: grid; gap: 14px; margin-top: 22px; }
+  @media (min-width: 620px) { .grid.two { grid-template-columns: 1fr 1fr; } }
+  .card {
+    background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 20px 22px;
+    box-shadow: 0 10px 24px rgba(122, 104, 86, 0.05);
+  }
+  .card h3 { font-size: 16px; margin: 0 0 6px; }
+  .card p { margin: 0; font-size: 15px; }
+
+  ul.plain { margin: 16px 0 0; padding-left: 1.1em; color: var(--ink-soft); }
+  ul.plain li { margin: 8px 0; }
+
+  pre {
+    background: var(--card); border: 1px solid var(--line); border-radius: 14px;
+    padding: 18px 20px; overflow-x: auto; font-size: 13.5px; line-height: 1.8; color: #4a423a;
+  }
+  code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+  p code, li code { background: #f4ecdf; border-radius: 5px; padding: 1px 6px; font-size: 0.92em; }
+
+  .note { border-left: 2px solid var(--accent); padding: 4px 0 4px 16px; color: var(--ink-soft); margin: 22px 0; font-size: 15px; }
+
+  footer { border-top: 1px solid var(--line); margin-top: 72px; padding-top: 22px; color: var(--muted); font-size: 13px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <span class="tag">V0 · 私有自用</span>
+    <h1>把今天的小故事，<br />画下来。</h1>
+    <p class="sub">上传几张宝宝的照片，说一句今天发生了什么。几分钟后，你会得到一本五页的成长小书——画的是她，写的是你们家的今天。</p>
+
+    <div class="mock-row" aria-hidden="true">
+      <div class="mock"><div class="art"></div><div class="cap"></div><div class="cap short"></div></div>
+      <div class="mock"><div class="art"></div><div class="cap"></div><div class="cap short"></div></div>
+      <div class="mock"><div class="art"></div><div class="cap"></div><div class="cap short"></div></div>
+      <div class="mock"><div class="art"></div><div class="cap"></div><div class="cap short"></div></div>
+    </div>
+    <div class="rule"></div>
+  </header>
+
+  <section>
+    <div class="kicker">Structure</div>
+    <h2>五页，讲清一件小事</h2>
+    <p>不讲道理，不写成长报告。就是刚才那件事：怎么开始的，发生了什么，哪一句话最想记住，最后你心里是什么感觉。</p>
+    <ol class="steps">
+      <li><b>封面</b><span>书名，加一张她的半身近景。</span></li>
+      <li><b>故事开始</b><span>时间、地点、那天的小状况，一句话交代清楚。</span></li>
+      <li><b>发生的事情</b><span>她做了什么。要能看见动作，不是「她很开心」。</span></li>
+      <li><b>最值得记住的细节</b><span>那句话，那个动作，原样留下来。</span></li>
+      <li><b>结尾</b><span>你当时的感受，收在一句轻的话里。</span></li>
+    </ol>
+  </section>
+
+  <section>
+    <div class="kicker">Flow</div>
+    <h2>先看文字，再画图</h2>
+    <p>文字没确认之前，不会调用任何一次画图。省下来的不只是钱，还有你返工的时间。</p>
+    <ol class="steps">
+      <li><b>传照片</b><span>1–6 张，建议 2–4 张：看得清脸，也看得清当天的衣服和配饰。</span></li>
+      <li><b>讲故事</b><span>三句话：发生了什么、当时的感受、想记下来的细节。</span></li>
+      <li><b>改文字</b><span>五页文字和画面描述都会给你看，点着就能改，书名也能改。</span></li>
+      <li><b>逐页画</b><span>确认后逐页生成。哪一页不满意就单独重画，其他页不动。</span></li>
+    </ol>
+  </section>
+
+  <section>
+    <div class="kicker">Look</div>
+    <h2>像一本真的小书</h2>
+    <p>暖白纸底，低饱和的浅杏、雾蓝、草绿。水彩和彩铅的手绘质感，线条圆但不幼稚，留白多，光很轻。</p>
+    <div class="grid two">
+      <div class="card">
+        <h3>机位要有远近</h3>
+        <p>封面偏近，后面几页中景、全身交替，能看到沙发、地板和她站着的整个样子。不是五张一样的大头照。</p>
+      </div>
+      <div class="card">
+        <h3>整本同一个人</h3>
+        <p>脸型、发型、当天的衣服和配饰，每页都锁住。画风统一，构图变化。</p>
+      </div>
+      <div class="card">
+        <h3>画面里没有字</h3>
+        <p>字由程序排上去，位置、字号、行距都可控。图上不会出现歪歪扭扭的 AI 文字。</p>
+      </div>
+      <div class="card">
+        <h3>不画不该有的东西</h3>
+        <p>故事里没有的人、动物、玩具、道具一律不出现。发烧就是发烧，不会变成吃药和体温计。</p>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="kicker">Privacy</div>
+    <h2>照片只留在你自己的电脑上</h2>
+    <ul class="plain">
+      <li>照片上传后重新编码，<strong>剥掉 EXIF</strong>：GPS、机型、拍摄时间都不保留。</li>
+      <li>文件存在本机 <code>data/</code> 目录，画图时以 Base64 直接发给火山方舟，<strong>不经过任何公网图床</strong>。</li>
+      <li>API Key 只从服务端环境变量读取，<strong>不进前端、不进日志、不进仓库</strong>。</li>
+      <li>删除作品时，连图片文件一起删掉，不留副本。</li>
+    </ul>
+  </section>
+
+  <section>
+    <div class="kicker">Run</div>
+    <h2>三行命令，本地跑起来</h2>
+    <pre><code>pip install -r requirements.txt
+setx ARK_API_KEY "你的火山方舟 Key"
+python run.py</code></pre>
+    <p>浏览器打开 <code>http://127.0.0.1:7860</code>，就是手机上的样子。一本五页按量计费，约 <strong>0.6 元</strong>，重画一页 0.12 元。</p>
+    <div class="note">
+      这是一个带密钥的 Python 服务端，<strong>不能托管在 GitHub Pages 上</strong>。这个页面只是产品介绍，真实生成必须在本机跑。
+    </div>
+  </section>
+
+  <section>
+    <div class="kicker">Scope</div>
+    <h2>V0 故意不做的事</h2>
+    <p>没有社区，没有点赞关注，没有自由创作模式，没有复杂编辑器，没有多画风，没有 AI 配音，没有打印和支付，也不做多宝宝。</p>
+    <p>也没有自动质检。宝宝像不像、场景对不对，机器不打分——你看一眼，说一句「不像」或「换个画面」，就重画那一页。</p>
+  </section>
+
+  <footer>
+    叽咕插画 V0 · 私有使用 · 照片与作品不上公网
+  </footer>
+
+</div>
+</body>
+</html>
