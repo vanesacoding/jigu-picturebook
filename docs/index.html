@@ -49,14 +49,27 @@
   .mock .art {
     flex: 1; border-radius: 8px; position: relative; overflow: hidden;
     background:
-      radial-gradient(circle at 50% 32%, #e6d1c0 0 16%, transparent 17%),
-      linear-gradient(180deg, var(--apricot) 0%, #f3e9d9 62%, #eee3d2 100%);
+      radial-gradient(120% 80% at 22% 18%, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0) 60%),
+      radial-gradient(90% 70% at 78% 82%, rgba(214, 186, 158, 0.55) 0%, rgba(214, 186, 158, 0) 62%),
+      linear-gradient(170deg, var(--apricot) 0%, #f6ecdd 58%, #efe4d3 100%);
   }
-  .mock:nth-child(3) .art { background: linear-gradient(180deg, var(--mist) 0%, #eef1ee 100%); }
-  .mock:nth-child(4) .art { background: linear-gradient(180deg, var(--grass) 0%, #f0f0e6 100%); }
-  .mock .art::after {
-    content: ""; position: absolute; left: 12%; right: 12%; bottom: 12%;
-    height: 26%; border-radius: 40% 40% 12% 12%; background: rgba(255, 255, 255, 0.55);
+  .mock:nth-child(3) .art {
+    background:
+      radial-gradient(120% 80% at 24% 16%, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0) 58%),
+      radial-gradient(90% 70% at 76% 84%, rgba(160, 190, 196, 0.45) 0%, rgba(160, 190, 196, 0) 60%),
+      linear-gradient(170deg, var(--mist) 0%, #eef2f1 60%, #e8ecea 100%);
+  }
+  .mock:nth-child(4) .art {
+    background:
+      radial-gradient(120% 80% at 26% 20%, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0) 58%),
+      radial-gradient(90% 70% at 74% 80%, rgba(168, 186, 150, 0.42) 0%, rgba(168, 186, 150, 0) 60%),
+      linear-gradient(170deg, var(--grass) 0%, #edf0e6 60%, #e7ebdf 100%);
+  }
+  .mock:nth-child(2) .art {
+    background:
+      radial-gradient(120% 80% at 20% 22%, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0) 58%),
+      radial-gradient(90% 70% at 80% 78%, rgba(228, 186, 170, 0.45) 0%, rgba(228, 186, 170, 0) 60%),
+      linear-gradient(170deg, #f8e8d6 0%, #f5ebdc 60%, #efe5d5 100%);
   }
   .mock .cap { height: 4px; border-radius: 2px; background: #e3d8c7; }
   .mock .cap.short { width: 62%; }
