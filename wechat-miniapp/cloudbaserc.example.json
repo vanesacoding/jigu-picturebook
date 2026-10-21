@@ -1,0 +1,45 @@
+{
+  "envId": "YOUR_CLOUDBASE_ENV_ID",
+  "functionRoot": "cloudfunctions",
+  "functions": [
+    {
+      "name": "api",
+      "runtime": "Nodejs20.19",
+      "handler": "index.main",
+      "timeout": 60,
+      "memorySize": 512,
+      "installDependency": true
+    },
+    {
+      "name": "generator",
+      "runtime": "Nodejs20.19",
+      "handler": "index.main",
+      "timeout": 120,
+      "memorySize": 512,
+      "installDependency": true,
+      "triggers": [
+        {
+          "name": "jiguBookQueue",
+          "type": "timer",
+          "config": "0 */1 * * * * *"
+        }
+      ]
+    },
+    {
+      "name": "payNotify",
+      "runtime": "Nodejs20.19",
+      "handler": "index.main",
+      "timeout": 60,
+      "memorySize": 512,
+      "installDependency": true
+    },
+    {
+      "name": "ops",
+      "runtime": "Nodejs20.19",
+      "handler": "index.main",
+      "timeout": 60,
+      "memorySize": 512,
+      "installDependency": true
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+node_modules/
+cloudfunctions/*/lib/
+project.private.config.json
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+artifacts/

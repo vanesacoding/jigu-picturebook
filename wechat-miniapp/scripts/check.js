@@ -1,0 +1,7 @@
+const fs=require('node:fs'),path=require('node:path'),vm=require('node:vm'),cp=require('node:child_process');const root=path.resolve(__dirname,'..');let count=0;
+function walk(dir){return fs.readdirSync(dir,{withFileTypes:true}).flatMap(f=>f.isDirectory()&&!['node_modules','.git','lib'].includes(f.name)?walk(path.join(dir,f.name)):f.isFile()?[path.join(dir,f.name)]:[])}
+for(const file of walk(root)){if(file.endsWith('.js')){new vm.Script(fs.readFileSync(file,'utf8'),{filename:file});count++}if(file.endsWith('.json'))JSON.parse(fs.readFileSync(file));}
+const app=JSON.parse(fs.readFileSync(path.join(root,'miniprogram/app.json')));for(const p of app.pages)for(const ext of ['js','json','wxml'])if(!fs.existsSync(path.join(root,'miniprogram',p+'.'+ext)))throw Error('Missing page: '+p+'.'+ext);
+console.log('JavaScript syntax checked:',count,'files. All',app.pages.length,'native page entries present.');
+// XML structural checks only: this does not replace the WeChat WXML compiler.
+cp.execFileSync('python3',['-c',`from pathlib import Path\nimport re,xml.etree.ElementTree as E\nfor p in Path(${JSON.stringify(root+'/miniprogram')}).rglob('*.wxml'):\n s=p.read_text()\n s=re.sub(r'{{.*?}}','binding',s,flags=re.S)\n s=re.sub(r'wx:([a-z]+)',r'wx_\\1',s)\n s=re.sub(r'wx_else(?=\\s|>)','wx_else=""',s)\n E.fromstring('<root>'+s+'</root>')\nprint('WXML XML structure checked.')`],{stdio:'inherit'});

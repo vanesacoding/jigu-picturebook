@@ -1,0 +1,38 @@
+{
+  "pages": [
+    "pages/home/index",
+    "pages/library/index",
+    "pages/create/index",
+    "pages/confirm/index",
+    "pages/generating/index",
+    "pages/reader/index",
+    "pages/orders/index",
+    "pages/products/index"
+  ],
+  "window": {
+    "navigationBarTitleText": "叽咕插画",
+    "navigationBarBackgroundColor": "#faf7f1",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#faf7f1"
+  },
+  "tabBar": {
+    "color": "#8c7e73",
+    "selectedColor": "#ad6b4d",
+    "backgroundColor": "#faf7f1",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/home/index",
+        "text": "做小书"
+      },
+      {
+        "pagePath": "pages/library/index",
+        "text": "我的小书"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents",
+  "__usePrivacyCheck__": true
+}

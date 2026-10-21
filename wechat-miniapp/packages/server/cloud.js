@@ -1,0 +1,19 @@
+'use strict';
+const wxcloud=require('wx-server-sdk');
+const tcb=require('@cloudbase/node-sdk');
+const sharp=require('sharp');
+const {createService,Problem}=require('./domain');
+const {createArk,createWechatPay}=require('./providers');
+wxcloud.init({env:wxcloud.DYNAMIC_CURRENT_ENV});
+const admin=tcb.init({env:process.env.TCB_ENV||process.env.SCF_NAMESPACE});
+const database=admin.database();
+function missing(e){return /DOCUMENT_NOT_EXIST|document[^\n]*(not exist|不存在)|-502006/i.test(String(e?.message||e))}
+function adapter(db,transactional=false){return{async get(table,id){try{const r=await db.collection(table).doc(id).get();const v=Array.isArray(r.data)?r.data[0]:r.data;return v?{...v,id:v.id||id}:null}catch(e){if(missing(e))return null;throw e}},async set(table,id,data){const value={...data};delete value._id;return db.collection(table).doc(id).set(value)},async update(table,id,data){return db.collection(table).doc(id).update(data)},async remove(table,id){const doc=db.collection(table).doc(id);return transactional?doc.delete():doc.remove()},async query(table,where,limit=100){const r=await db.collection(table).where(where).limit(limit).get();return r.data.map(v=>({...v,id:v.id||v._id}))}}}
+const store=adapter(database);store.transaction=fn=>database.runTransaction(tx=>fn(adapter(tx,true)));
+const files={async normalize(raw,size){try{return await sharp(raw,{limitInputPixels:36e6}).rotate().resize({width:size,height:size,fit:'inside',withoutEnlargement:true}).flatten({background:'#fff'}).jpeg({quality:87}).toBuffer()}catch{throw new Problem('INPUT','照片无法读取，请选择清楚的 JPG 或 PNG 图片')}},async verifyGenerated(raw,width,height){const meta=await sharp(raw).metadata();if(meta.width!==width||meta.height!==height)throw new Problem('MODEL_UNCERTAIN','插画尺寸不符合书页要求');return sharp(raw).jpeg({quality:92}).toBuffer()},async put(path,bytes){return(await admin.uploadFile({cloudPath:'jigu-private/'+path,fileContent:bytes})).fileID},async read(fileId){const result=await wxcloud.downloadFile({fileID:fileId});return result.fileContent},async url(fileId,age){const result=await admin.getTempFileURL({fileList:[{fileID:fileId,maxAge:age}]});const row=result.fileList[0];if(!row?.tempFileURL)throw new Problem('NOT_FOUND','图片暂时无法读取');return row.tempFileURL},async remove(ids){if(ids.length)await admin.deleteFile({fileList:ids})}};
+function config(){return{arkKey:process.env.ARK_API_KEY||'',textModel:process.env.ARK_TEXT_MODEL||'',paidEnabled:process.env.ARK_PAID_ENABLED==='1',budgetCny:Number(process.env.ARK_TOTAL_BUDGET_CNY||0),imageUnitCny:Number(process.env.ARK_IMAGE_UNIT_CNY||.12),appId:process.env.WX_APP_ID||'',mchId:process.env.WX_MCH_ID||'',paySerial:process.env.WX_PAY_MERCHANT_SERIAL||'',payPrivateKey:process.env.WX_PAY_PRIVATE_KEY||'',payPublicKey:process.env.WX_PAY_PUBLIC_KEY||'',payPublicKeyId:process.env.WX_PAY_PUBLIC_KEY_ID||'',payApiV3Key:process.env.WX_PAY_API_V3_KEY||'',payNotifyUrl:process.env.WX_PAY_NOTIFY_URL||'',paymentEnabled:process.env.WX_PAYMENT_ENABLED==='1',iosPayEnabled:process.env.WX_IOS_PAY_ENABLED==='1',giftSecret:process.env.GIFT_SIGNING_KEY||'',products:[{name:'叽咕一下',description:'和宝宝一起读英语绘本',appId:process.env.JIGU_READING_APP_ID||'',path:process.env.JIGU_READING_PATH||'',webUrl:'https://vanesacoding.github.io/say-it-today/'}]}}
+function service(){const cfg=config();const pay=createWechatPay(cfg);return{domain:createService({store,files,ark:createArk(cfg),pay,config:cfg}),pay}}
+function identity(){const ctx=wxcloud.getWXContext();if(!ctx.OPENID)throw new Problem('LOGIN','请在微信中打开小程序');return ctx.OPENID}
+function publicError(e){return{ok:false,error:{code:e instanceof Problem?e.code:'SERVICE',message:e instanceof Problem?e.message:'暂时没有完成，请稍后重试'}}}
+function invokedByUser(){return !!wxcloud.getWXContext().OPENID}
+module.exports={service,identity,publicError,Problem,invokedByUser};

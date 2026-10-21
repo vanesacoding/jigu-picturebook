@@ -1,0 +1,17 @@
+{
+  "*": {
+    "invoke": false
+  },
+  "api": {
+    "invoke": "auth != null"
+  },
+  "generator": {
+    "invoke": false
+  },
+  "ops": {
+    "invoke": false
+  },
+  "payNotify": {
+    "invoke": false
+  }
+}

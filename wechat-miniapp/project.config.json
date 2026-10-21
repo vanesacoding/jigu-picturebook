@@ -1,0 +1,13 @@
+{
+  "appid": "touristappid",
+  "projectname": "jigu-illustration",
+  "compileType": "miniprogram",
+  "miniprogramRoot": "miniprogram/",
+  "cloudfunctionRoot": "cloudfunctions/",
+  "setting": {
+    "es6": true,
+    "minified": true,
+    "urlCheck": true
+  },
+  "libVersion": "3.7.11"
+}
