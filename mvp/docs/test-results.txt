@@ -1,0 +1,26 @@
+test_all_cross_user_routes_denied (test_app.AppTests.test_all_cross_user_routes_denied) ... ok
+test_ambiguous_failure_does_not_retry (test_app.AppTests.test_ambiguous_failure_does_not_retry) ... ok
+test_auth_and_logout (test_app.AppTests.test_auth_and_logout) ... ok
+test_budget_and_paid_gate (test_app.AppTests.test_budget_and_paid_gate) ... ok
+test_concurrent_submission_idempotent (test_app.AppTests.test_concurrent_submission_idempotent) ... ok
+test_csrf_and_origin (test_app.AppTests.test_csrf_and_origin) ... ok
+test_exif_and_cascade_delete (test_app.AppTests.test_exif_and_cascade_delete) ... ok
+test_extractive_story_counts_and_original_quote (test_app.AppTests.test_extractive_story_counts_and_original_quote) ... ok
+test_invalid_upload_rolls_back_files (test_app.AppTests.test_invalid_upload_rolls_back_files) ... ok
+test_model_output_rejected_if_wrong_count (test_app.AppTests.test_model_output_rejected_if_wrong_count) ... ok
+test_optimistic_lock_and_save (test_app.AppTests.test_optimistic_lock_and_save) ... ok
+test_pdf_complete_only (test_app.AppTests.test_pdf_complete_only) ... ok
+test_persistent_queue_and_seedream_payload (test_app.AppTests.test_persistent_queue_and_seedream_payload) ... ok
+test_redraw_candidate_keeps_original (test_app.AppTests.test_redraw_candidate_keeps_original) ... ok
+test_restart_marks_interrupted_without_touching_completed (test_app.AppTests.test_restart_marks_interrupted_without_touching_completed) ... ok
+test_retry_failed_redraw_keeps_original (test_app.AppTests.test_retry_failed_redraw_keeps_original) ... ok
+test_spend_survives_book_deletion (test_app.AppTests.test_spend_survives_book_deletion) ... ok
+test_text_model_requires_paid_authorization (test_app.AppTests.test_text_model_requires_paid_authorization) ... ok
+test_visual_constraints_persist (test_app.AppTests.test_visual_constraints_persist) ... ok
+test_worker_does_not_resend_running_job (test_app.AppTests.test_worker_does_not_resend_running_job) ... ok
+test_worker_lock_prevents_second_process (test_app.AppTests.test_worker_lock_prevents_second_process) ... ok
+
+----------------------------------------------------------------------
+Ran 21 tests in 20.770s
+
+OK

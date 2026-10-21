@@ -1,0 +1,8 @@
+private-data
+.env
+.venv
+__pycache__
+tests
+screenshots
+docs
+.git

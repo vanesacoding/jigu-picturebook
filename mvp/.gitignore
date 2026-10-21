@@ -1,0 +1,6 @@
+private-data/
+.env
+.venv/
+__pycache__/
+*.pyc
+screenshots/

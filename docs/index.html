@@ -4,7 +4,7 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <title>叽咕插画 · 把今天的小故事，画下来</title>
-<meta name="description" content="上传宝宝照片，说一句今天发生了什么，几分钟做一本属于宝宝的成长小书。私有自用的 V0。" />
+<meta name="description" content="上传宝宝照片，说一句今天发生了什么，几分钟做一本属于宝宝的成长小书。私有成长绘本产品，提供本地 MVP 源码与运行说明。" />
 <style>
   :root {
     --paper: #fbf6ec;
@@ -119,7 +119,7 @@
 <div class="wrap">
 
   <header class="hero">
-    <span class="tag">V0 · 私有自用</span>
+    <span class="tag">叽咕插画 · 私有成长记录</span>
     <h1>把今天的小故事，<br />画下来。</h1>
     <p class="sub">上传几张宝宝的照片，说一句今天发生了什么。几分钟后，你会得到一本五页的成长小书——画的是她，写的是你们家的今天。</p>
 
@@ -131,6 +131,15 @@
     </div>
     <div class="rule"></div>
   </header>
+
+
+  <section id="mvp">
+    <div class="kicker">MVP · 2026.10.21</div>
+    <h2>新版 MVP 源码已更新</h2>
+    <p>新增私密账号、5 / 7 / 10 页故事确认、后台任务恢复、单页重画保留原图、作品收藏与 PDF 下载。21 项接口测试通过，真实豆包生图仍待配置与验收。</p>
+    <p><a href="https://github.com/vanesacoding/jigu-picturebook/tree/main/mvp">查看 MVP 完整代码 →</a>　<a href="https://github.com/vanesacoding/jigu-picturebook/blob/main/mvp/README.md">安装与运行说明 →</a></p>
+    <div class="note">本页是产品介绍，不能直接生成绘本。GitHub Pages 不运行 Python 后端；请按运行说明启动服务端与 worker。密钥只放服务端环境，照片与作品不要上传 GitHub。此前 V0 的说明保留在下方。</div>
+  </section>
 
   <section>
     <div class="kicker">Structure</div>
@@ -194,7 +203,7 @@
 
   <section>
     <div class="kicker">Run</div>
-    <h2>三行命令，本地跑起来</h2>
+    <h2>旧版 V0 的本地启动方式</h2>
     <pre><code>pip install -r requirements.txt
 setx ARK_API_KEY "你的火山方舟 Key"
 python run.py</code></pre>
@@ -212,7 +221,7 @@ python run.py</code></pre>
   </section>
 
   <footer>
-    叽咕插画 V0 · 私有使用 · 照片与作品不上公网
+    叽咕插画 · MVP 源码与 V0 归档 · 照片和密钥不上传 GitHub
   </footer>
 
 </div>
