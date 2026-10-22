@@ -1,20 +1,14 @@
-# Design QA — 叽咕插画
+# 叽咕插画 V7 验收状态
 
-- Source visual truth: user-selected second displayed ImageGen mock in this conversation (390 × 844 logical px, upload + story composer).
-- Implementation: docs/index.html, docs/app.mjs, docs/style.css.
-- Implementation screenshot: unavailable.
-- Intended viewport: 390 × 844, additional 350px and desktop widths.
-- State: empty home composer; confirmation; reader; library; account.
-- Source and implementation density normalization: not performed because browser capture is unavailable.
-- Full-view and focused comparison evidence: blocked; no browser-rendered screenshot was available.
-- Fonts/typography: selected system KaiTi/STKaiti for hand-written headings and system sans-serif body; visual comparison pending.
-- Spacing/layout rhythm: 22px mobile gutters, direct composer hierarchy, persistent three-tab navigation; rendered comparison pending.
-- Colors/tokens: warm ivory #fcf9f2, terracotta #df783e, brown #3c3026 from selected direction; visual comparison pending.
-- Image quality: four 800 × 800 JPEGs derived from generated watercolor illustrations; original supplied bird reused, official Feather Icons used. Position, crop and sharpness on devices are unverified.
-- Copy/content: selected main heading retained; support copy, five-page path, and account-only product links present; browser legibility pending.
-- Primary interactions: actual application handlers checked in Node VM, including example creation, confirmation editing, generation, five-page navigation boundaries, text editing, saved shelf persistence and escaping. File-picker/canvas/PDF browser integration not checked.
-- Console errors: browser console not accessible; JS syntax checked successfully.
-- Comparison history: attempted GitHub Pages and local 127.0.0.1 previews via cua; both denied by origin approval/security policy. No alternate browser surface or browser bypass was used.
-- Remaining blocker: browser permission required for screenshots, visual comparison and real browser interactions.
-- final result: blocked
-
+Source: 叽咕一会线上仓库 index.html 的品牌字体、字号和颜色，以及本次生成的画笔小鸟。
+Implementation: docs/。目标为移动端 390×844 与窄屏 350px；源和实现的截图均无法获取，因为浏览器清单为空。
+Fonts: 系统无衬线；品牌 19px，页面标题 22–23px，正文 13–14px。
+Spacing: 20px 页边距，12–17px 圆角；引导问题、照片尾页选项和价格分区。
+Colors: #faf7f1/#352c28/#38312c/#c97853/#e7efe1，与叽咕一会源码对齐。
+Imagery: 生成的画笔小鸟及原有四张示例插画；真实尾页从当前设备选中的照片读取。
+Content: 三个引导问题；5/10 页插画价格；免费照片尾页；演示不扣费；共读规则明确标记尚未接入。
+Direct checks: 脚本语法、问答验证、6/11页结构与价格、选中照片 Blob URL、翻页边界、文字修改、书架保存、重画上限、PDF 复用合成模块、缓存文件存在性。
+Test cases: all 21 existing/new cases were executed directly and passed; standard CLI scheduling remains unavailable due to shell provisioning and in-process runner timeout. Direct cases do not replace browser evidence.
+Browser screenshot, typography/spacing comparison, console errors, canvas visual output, touch/file-picker and PDF-download interactions: not verified.
+Full-view/focused comparison evidence: unavailable. No claimed visual pass.
+final result: blocked

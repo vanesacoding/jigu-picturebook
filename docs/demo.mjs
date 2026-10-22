@@ -1,20 +1,22 @@
-import {localDate} from './core.mjs';
-// shortcut: fixed example art stands in for AI; replace this module with server jobs for launch.
+// shortcut: local demo uses fixed illustration assets. Replace these adapters with server jobs at launch.
 export const ART=['./assets/puddle-walk.jpg','./assets/puddle-look.jpg','./assets/puddle-story.jpg','./assets/puddle-story.jpg','./assets/puddle-hug.jpg'];
+export const PLANS={5:{price:390,label:'小小故事'},10:{price:790,label:'完整故事'}};
 export const EVENT='今天下过雨，我带开心去公园。她先蹲下来看水坑里的倒影，然后鼓起勇气，第一次自己跳过了小水坑。她回头喊：“妈妈，我跳过去啦！”我抱了抱她。';
-const TEXT=['第一次跳过小水坑','雨停了，开心穿上黄色雨靴，和妈妈一起去公园。','小水坑亮晶晶的。开心蹲下来，发现里面还有一个小小的自己。','“妈妈，看我！”开心轻轻一跳，水花也跟着跳了起来。','妈妈抱住开心。今天的小小勇敢，要好好记下来。'];
+export const EXAMPLE_ANSWERS={where:'雨后的公园',what:'开心第一次自己跳过了小水坑。',reaction:'她回头喊：“妈妈，我跳过去啦！”我抱了抱她。'};
+export function storyInput(answers){const a=answers||{};if(!String(a.where||'').trim()||!String(a.what||'').trim())throw Error('填一下去了哪里、发生了什么小事吧');return[String(a.where).trim()+'。',String(a.what).trim(),String(a.reaction||'').trim()].filter(Boolean).join('');}
 export function createStory(input){
- const event=String(input.event||'').trim();if(!event)throw Error('先写下今天发生的一件小事吧');if(event.length>1600)throw Error('故事最多写 1600 字哦');
+ const event=String(input.event||'').trim();if(!event)throw Error('先记下今天的小事吧');if(event.length>1600)throw Error('这段经历有点长，精简到 1600 字以内吧');
+ const count=Number(input.count||5);if(!PLANS[count])throw Error('请选择 5 页或 10 页');
  const name=String(input.nickname||'宝宝').trim().slice(0,20)||'宝宝';
- const parts=event.match(/[^。！？!?\n]+[。！？!?]?[”」]?/g)||[event],groups=Array.from({length:4},()=>[]);
- const chunks=parts.flatMap(s=>{const out=[];for(let i=0;i<s.length;i+=100)out.push(s.slice(i,i+100));return out;});
- chunks.forEach((s,i)=>groups[Math.min(3,Math.floor(i*4/Math.max(4,chunks.length)))].push(s));
- const title=event===EVENT?TEXT[0]:name+'的成长小故事';
- const texts=event===EVENT?TEXT:[title,...groups.map((g,i)=>g.join('')||['这件小事，值得好好留下。','这是属于'+name+'的一天。','慢慢长大，也慢慢收藏这些瞬间。','今天的故事，就收到这里。'][i])];
- return{title,count:5,demo:true,status:'draft',saved:false,redrawUsed:0,pages:texts.map((text,i)=>({text,art:ART[i],image:null}))};
+ const parts=event.match(/[^。！？!?\n]+[。！？!?]?[”」]?/g)||[event],groups=Array.from({length:count-1},()=>[]);
+ const chunks=parts.flatMap(s=>{const out=[];for(let i=0;i<s.length;i+=100)out.push(s.slice(i,i+100));return out});
+ chunks.forEach((s,i)=>groups[Math.min(groups.length-1,Math.floor(i*groups.length/Math.max(groups.length,chunks.length)))].push(s));
+ const title=input.example?'第一次跳过小水坑':name+'的成长小故事';
+ const endings=['今天的小事，想和你一起记住。','慢慢长大，也慢慢发现这个世界。','这一天，因为有你，变得特别。'];
+ const texts=[title,...groups.map((g,i)=>g.join('')||endings[i%endings.length])];
+ return{title,count,amount:PLANS[count].price,demo:true,status:'draft',saved:false,redrawUsed:0,pages:texts.map((text,i)=>({text,art:ART[i%ART.length],type:'illustration',image:null}))};
 }
-export function complete(book){return{...book,status:'ready',pages:book.pages.map((p,i)=>({...p,art:p.art||ART[i],image:{id:book.id+'-'+i}}))};}
-export function imageMap(book){return Object.fromEntries(book.pages.filter(p=>p.image).map((p,i)=>[p.image.id,p.art||ART[i]]));}
-export const SAMPLE=complete({...createStory({event:EVENT,nickname:'开心'}),id:'sample',sample:true,saved:true,date:'2026-10-22',input:{event:EVENT,nickname:'开心'},photos:[]});
-
-
+export function appendPhoto(book,photoId){return{...book,storyPhotoId:photoId||null,pages:[...book.pages.filter(p=>p.type!=='photo'),{type:'photo',text:'故事之外，真实的这一天',photoId:photoId||null,art:photoId?null:ART[2],examplePhoto:!photoId,image:null}]};}
+export function complete(book){return{...book,status:'ready',pages:book.pages.map((p,i)=>({...p,image:{id:book.id+'-'+i}}))};}
+export function imageMap(book){return Object.fromEntries(book.pages.filter(p=>p.image).map(p=>[p.image.id,p.art]));}
+export const SAMPLE=complete(appendPhoto({...createStory({event:EVENT,nickname:'开心',example:true}),id:'sample',sample:true,saved:true,date:'2026-10-22',input:{event:EVENT,nickname:'开心',answers:EXAMPLE_ANSWERS},photos:[]},null));

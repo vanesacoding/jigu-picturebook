@@ -1,3 +1,4 @@
+import {Blob} from 'node:buffer';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs/promises';
@@ -5,7 +6,7 @@ import vm from 'node:vm';
 import path from 'node:path';
 
 async function harness(){
- const root=path.resolve('docs'),db={books:new Map(),photos:new Map(),meta:new Map()},nodes=new Map(),events={};
+ const root=path.resolve(import.meta.dirname,'../../docs'),db={books:new Map(),photos:new Map(),meta:new Map()},nodes=new Map(),events={};
  function element(){return{innerHTML:'',textContent:'',value:'',hidden:false,disabled:false,dataset:{},open:false,addEventListener(){},setAttribute(){},showModal(){this.open=true},close(){this.open=false}}}
  const node=s=>{if(!nodes.has(s))nodes.set(s,element());return nodes.get(s)};
  const document={hidden:false,querySelector:node,querySelectorAll:s=>s==='[data-page]'?node('pages').items||[]:[],addEventListener(n,fn){(events[n]??=[]).push(fn)}};
@@ -22,7 +23,7 @@ async function harness(){
 }
 test('real page handlers complete example creation, edit, five-page reading and shelf persistence',async()=>{
  const h=await harness(),a=h.api;
- assert.match(h.node('#app').innerHTML,/今天，有什么小事想留下/);
+ assert.match(h.node('#app').innerHTML,/把今天的小事，画成故事/);
  await a.actions['use-example']();await h.submit();
  assert.match(h.context.location.hash,/#\/confirm\//);
  const id=[...h.db.books.keys()][0];await h.render('confirm',id);
@@ -30,7 +31,7 @@ test('real page handlers complete example creation, edit, five-page reading and 
  await a.actions.generate();await h.render('generating',id);
  for(let i=0;i<5;i++)await h.tick();
  assert.equal(h.db.books.get(id).status,'ready');await h.render('reader',id);
- a.actions.prev();assert.equal(a.S.current,0);for(let i=0;i<8;i++)a.actions.next();assert.equal(a.S.current,4);
+ a.actions.prev();assert.equal(a.S.current,0);for(let i=0;i<8;i++)a.actions.next();assert.equal(a.S.current,5);a.actions.prev();
  h.node('#page-edit').value='妈妈把今天的小勇敢，记在了心里。';await a.actions['save-page']();
  assert.match(h.db.books.get(id).pages[4].text,/小勇敢/);
  await a.actions['save-book']();assert.equal(h.db.books.get(id).saved,true);
@@ -45,3 +46,6 @@ test('confirmation edits persist and user markup is escaped when reading',async(
  await h.render('confirm',id);assert.match(h.node('#app').innerHTML,/&lt;img onerror=evil\(\)&gt;/);assert.doesNotMatch(h.node('#app').innerHTML,/<img onerror/);
 });
 
+
+test('10-page guided plan produces 11 pages and stores the chosen local photo',async()=>{const h=await harness(),a=h.api;await a.actions['use-example']();await a.actions.plan({dataset:{count:'10'}});a.S.draft.photos=[{id:'real-photo'}];a.S.draft.storyPhotoId='real-photo';await h.store.put('photos',{id:'real-photo',blob:new Blob(['local fixture'],{type:'image/jpeg'})});await h.submit();const id=[...h.db.books.keys()][0],b=h.db.books.get(id);assert.equal(b.count,10);assert.equal(b.amount,790);assert.equal(b.pages.length,11);assert.equal(b.pages.at(-1).photoId,'real-photo');assert.equal(b.pages.at(-1).art,null);});
+test('both questions and pricing remain visible while reward rules are explicitly planned',async()=>{const h=await harness();assert.match(h.node('#app').innerHTML,/今天在哪里，和谁一起/);assert.match(h.node('#app').innerHTML,/发生了哪件小事/);assert.match(h.node('#app').innerHTML,/宝宝有什么反应/);assert.match(h.node('#app').innerHTML,/¥3.9/);assert.match(h.node('#app').innerHTML,/¥7.9/);await h.render('account');assert.match(h.node('#app').innerHTML,/规划中/);});
