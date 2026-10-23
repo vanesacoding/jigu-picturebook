@@ -1,6 +1,6 @@
-const CACHE='jigu-illustration-pwa-v7-guided';
+const CACHE='jigu-illustration-pwa-v8-mom-flow';
 const ROOT=new URL('./',self.location).href;
-const FILES=['./','./index.html','./style.css?v=7','./app.mjs?v=7','./demo.mjs','./pages.mjs','./core.mjs','./storage.mjs','./pdf.mjs','./manifest.webmanifest','./assets/bird.webp','./assets/paint-bird.webp','./assets/puddle-story.jpg','./assets/puddle-walk.jpg','./assets/puddle-look.jpg','./assets/puddle-hug.jpg','./assets/icon-192.png','./assets/icon-512.png','./assets/maskable-512.png'];
+const FILES=['./','./index.html','./style.css?v=8','./app.mjs?v=8','./demo.mjs','./pages.mjs','./core.mjs','./storage.mjs','./pdf.mjs','./manifest.webmanifest','./assets/bird.webp','./assets/paint-bird.webp','./assets/puddle-story.jpg','./assets/puddle-walk.jpg','./assets/puddle-look.jpg','./assets/puddle-hug.jpg','./assets/icon-192.png','./assets/icon-512.png','./assets/maskable-512.png'];
 const ALLOWED=new Set(FILES.map(p=>new URL(p,ROOT).href));
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(FILES)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',event=>event.waitUntil((async()=>{for(const key of await caches.keys())if(key.startsWith('jigu-illustration-pwa-')&&key!==CACHE)await caches.delete(key);await self.clients.claim()})()));

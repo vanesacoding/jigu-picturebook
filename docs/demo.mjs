@@ -17,6 +17,10 @@ export function createStory(input){
  return{title,count,amount:PLANS[count].price,demo:true,status:'draft',saved:false,redrawUsed:0,pages:texts.map((text,i)=>({text,art:ART[i%ART.length],type:'illustration',image:null}))};
 }
 export function appendPhoto(book,photoId){return{...book,storyPhotoId:photoId||null,pages:[...book.pages.filter(p=>p.type!=='photo'),{type:'photo',text:'故事之外，真实的这一天',photoId:photoId||null,art:photoId?null:ART[2],examplePhoto:!photoId,image:null}]};}
-export function complete(book){return{...book,status:'ready',pages:book.pages.map((p,i)=>({...p,image:{id:book.id+'-'+i}}))};}
+export function complete(book){return{...book,status:'ready',saved:true,pages:book.pages.map((p,i)=>({...p,image:{id:book.id+'-'+i}}))};}
 export function imageMap(book){return Object.fromEntries(book.pages.filter(p=>p.image).map(p=>[p.image.id,p.art]));}
 export const SAMPLE=complete(appendPhoto({...createStory({event:EVENT,nickname:'开心',example:true}),id:'sample',sample:true,saved:true,date:'2026-10-22',input:{event:EVENT,nickname:'开心',answers:EXAMPLE_ANSWERS},photos:[]},null));
+
+export const GENERATION_MS=3250;
+export function generationProgress(book,now=Date.now()){const started=Number(book.generationStartedAt||book.updatedAt||now);return Math.max(0,Math.min(100,Math.floor((now-started)/GENERATION_MS*100)));}
+export function bookGroup(book){return book.status==='ready'?'ready':book.status==='generating'?'generating':'draft';}

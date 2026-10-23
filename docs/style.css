@@ -161,3 +161,14 @@ dialog textarea{font-size:14px}
 .reading-reward strong{font-size:13px;font-weight:650}.reading-reward em{font-size:10px;font-weight:400;font-style:normal;color:#8c7e73;margin-left:6px}
 .reading-reward p{font-size:12px;line-height:1.8;color:#8c7e73;margin-top:8px}.reading-reward .text-button{padding:6px 0;min-height:36px;font-size:11px}
 @media(max-width:374px){.plan-choices strong{font-size:12px}.plan-choices b{font-size:15px}.how-it-works span{padding:7px 10px}}
+
+/* V8: lighter confirmation, visible context and recoverable photo pages. */
+.demo-banner{font-size:11px;color:#68745a;background:#edf1e7;border-radius:10px;padding:9px 12px;line-height:1.7;margin-top:15px}
+.story-basics{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:12px;margin:22px 0 10px}.story-basics>div{min-width:0}.story-basics label{display:block;font-size:12px;font-weight:600;margin-bottom:8px}.story-basics label small{font-size:10px;color:#8c7e73;font-weight:400}.story-basics input{width:100%;min-width:0;min-height:44px;font-size:13px;padding:10px}
+.draft-status{font-size:11px;line-height:1.8;color:#78846b;margin-top:14px}.form-error{font-size:13px;line-height:1.8;color:#9c4d37;background:#fff0e9;border-radius:10px;padding:12px;margin:12px 0}
+.story-recap{background:#f3eee6;border-radius:12px;padding:15px;margin:18px 0}.story-recap p{font-size:14px;line-height:1.9;margin:7px 0 0;overflow-wrap:anywhere}
+.story-review{margin:15px 0;border:1px solid #e7dfd3;border-radius:12px;padding:0 14px}.story-review summary{min-height:52px;padding:14px 0;font-size:13px;cursor:pointer;line-height:1.7}.story-review summary span{display:block;font-size:11px;color:#8c7e73;margin-left:16px}
+.photo-tail-preview{background:#edf1e7;border-radius:12px;padding:14px;margin-top:18px}.photo-tail-preview>div{display:flex;align-items:center;gap:12px}.photo-tail-preview img{width:68px;height:82px;object-fit:contain;border-radius:8px;background:#faf7f1}.photo-tail-preview strong{font-size:13px;line-height:1.7}.photo-tail-preview small{display:block;font-size:11px;line-height:1.8;color:#8c7e73;margin-top:6px}.photo-tail-preview .text-button{min-height:44px;padding:10px 0 0}
+.page-status{font-size:12px;color:#8c7e73;line-height:1.8;text-align:center;margin:10px 0}.page-status button{min-height:44px;margin-left:8px}.photo-page-tools{margin:12px 0;text-align:center}.photo-page-tools .small{margin-top:7px}
+.story-photo-choice{min-height:44px}.photo-item{height:124px}.reader-page .reader-tools button{min-height:44px}
+@media(max-width:374px){.story-basics{gap:9px}.story-basics input{font-size:12px;padding:9px 7px}}

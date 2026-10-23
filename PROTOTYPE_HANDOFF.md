@@ -1,4 +1,4 @@
-# 叽咕插画 V7 · 小程序界面交付
+# 叽咕插画 V8 · 小程序界面交付
 
 公开预览使用 docs/，延续首页、书架、我的三个入口。原有 server/、mvp/、web/ 与 wechat-miniapp/ 不在本次改动范围。
 
@@ -16,3 +16,8 @@
 AI、真实订单与共读发奖均未接通。页面清楚标注演示不扣费；不把妈妈照片上传到公共仓库。真实版本需接入微信账号、腾讯云私有存储、豆包任务、支付与奖励账本。此次不修改叽咕一会。
 
 已直接执行全部 21 个测试用例，均通过，另外检查重画计次和本地照片 Blob 引用。标准命令为 node --experimental-vm-modules --test pwa/tests/*.test.mjs；当前环境的标准 CLI 调度器不可用，实际采用相同用例直接执行。浏览器渲染与手机验收仍待完成。
+
+## V8 更新
+流程与证据限制见 PRODUCT_REVIEW_V8.md。demo.mjs 新增 generationProgress、GENERATION_MS、bookGroup；生成任务依旧为本地演示，未来接入服务端任务时替换调度，不沿用客户端计时作为计费或发奖依据。成书按 status=ready 展示在已完成；saved 保留兼容字段。新生成作品自动设置 saved=true。
+
+照片尾页替换使用本地压缩 Blob，保持 image.id 并更新 photoId、storyPhotoId 和 photos 引用；不消耗重画次数。旧草稿无需数据库迁移。确认页逐页编辑折叠后仍保留全部输入与自动保存。
