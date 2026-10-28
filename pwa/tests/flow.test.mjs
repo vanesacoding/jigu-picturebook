@@ -8,17 +8,17 @@ import path from 'node:path';
 async function harness(){
  let now=Date.now();class ClockDate extends Date{constructor(...args){super(...(args.length?args:[now]))}static now(){return now}}
  const root=path.resolve(import.meta.dirname,'../../docs'),db={books:new Map(),photos:new Map(),meta:new Map()},nodes=new Map(),events={};
- function element(){return{innerHTML:'',textContent:'',value:'',hidden:false,disabled:false,dataset:{},open:false,addEventListener(){},setAttribute(){},showModal(){this.open=true},close(){this.open=false}}}
+ function element(){return{innerHTML:'',textContent:'',value:'',hidden:false,disabled:false,dataset:{},open:false,querySelector(){return null},append(){},addEventListener(){},setAttribute(){},showModal(){this.open=true},close(){this.open=false}}}
  const node=s=>{if(!nodes.has(s))nodes.set(s,element());return nodes.get(s)};
- const document={hidden:false,querySelector:node,querySelectorAll:s=>s==='[data-page]'?node('pages').items||[]:[],addEventListener(n,fn){(events[n]??=[]).push(fn)}};
+ const document={hidden:false,createElement:element,querySelector:node,querySelectorAll:s=>s==='[data-page]'?node('pages').items||[]:[],addEventListener(n,fn){(events[n]??=[]).push(fn)}};
  const store={async get(n,k){const v=db[n].get(k);return v?structuredClone(v):undefined},async put(n,v){db[n].set(v.id,structuredClone(v))},async all(n){return[...db[n].values()].map(v=>structuredClone(v))},async remove(n,k){db[n].delete(k)}};
  let interval;
  const context=vm.createContext({console,document,navigator:{},location:{hash:'#/home'},crypto:{randomUUID:()=> 'book-'+crypto.randomUUID()},Date:ClockDate,URL,structuredClone,sessionStorage:{data:new Map(),getItem(k){return this.data.get(k)},setItem(k,v){this.data.set(k,v)}},setTimeout(fn){return 1},clearTimeout(){},setInterval(fn){interval=fn;return 1},clearInterval(){},window:{addEventListener(){},scrollTo(){}},Error,Promise});
  const modules=new Map();
- const storage=new vm.SyntheticModule(['store','compressPhoto'],function(){this.setExport('store',store);this.setExport('compressPhoto',async()=>new Blob())},{context});
+ const storage=new vm.SyntheticModule(['store','compressPhoto','transaction'],function(){this.setExport('store',store);this.setExport('transaction',async(names,mode,fn)=>{const pending=[];let aborted=false;const tx={abort(){aborted=true},objectStore(name){return{get(id){const req={result:structuredClone(db[name].get(id))};pending.push(req);return req},put(v){db[name].set(v.id,structuredClone(v))},delete(id){db[name].delete(id)}}}};fn(tx);for(const req of pending)req.onsuccess?.();if(aborted)throw Error('Transaction aborted');});this.setExport('compressPhoto',async()=>new Blob())},{context});
  const pdf=new vm.SyntheticModule(['downloadPDF'],function(){this.setExport('downloadPDF',async()=>{throw Error('PDF browser rasterization is not covered by VM checks')})},{context});
  modules.set(path.join(root,'storage.mjs'),storage);modules.set(path.join(root,'pdf.mjs'),pdf);
- async function load(file){if(modules.has(file))return modules.get(file);let source=await fs.readFile(file,'utf8');if(file.endsWith('app.mjs'))source+='\nexport {S,actions,render};';const m=new vm.SourceTextModule(source,{context,identifier:file});modules.set(file,m);await m.link((s,from)=>load(path.resolve(path.dirname(from.identifier),s)));return m;}
+ async function load(file){if(modules.has(file))return modules.get(file);let source=await fs.readFile(file,'utf8');if(file.endsWith('app.mjs'))source+='\nexport {S,actions,render};';const m=new vm.SourceTextModule(source,{context,identifier:file});modules.set(file,m);await m.link((s,from)=>load(path.resolve(path.dirname(from.identifier),s.split('?')[0])));return m;}
  const mod=await load(path.join(root,'app.mjs'));await mod.evaluate();
  return{api:mod.namespace,context,node,db,store,async submit(){for(const fn of events.submit||[])await fn({target:{id:'story-form'},preventDefault(){}})},async render(view,id=''){context.location.hash='#/'+view+(id?'/'+id:'');await mod.namespace.render()},async input(el){for(const fn of events.input||[])await fn({target:el})},async change(el){for(const fn of events.change||[])await fn({target:el})},async tick(){now+=650;await interval()},advance(ms){now+=ms}};
 }
@@ -35,7 +35,7 @@ test('real page handlers complete example creation, edit, five-page reading and 
  a.actions.prev();assert.equal(a.S.current,0);for(let i=0;i<8;i++)a.actions.next();assert.equal(a.S.current,5);a.actions.prev();
  h.node('#page-edit').value='妈妈把今天的小勇敢，记在了心里。';await a.actions['save-page']();
  assert.match(h.db.books.get(id).pages[4].text,/小勇敢/);
- await a.actions['save-book']();assert.match(h.node('#dialog').innerHTML,/首次免费体验/);const preview=h.db.books.get(id);preview.status='ready';preview.saved=true;await h.store.put('books',preview);
+ await a.actions['save-book']();assert.match(h.node('#dialog').innerHTML,/首次免费体验/);await a.actions['claim-delivery']({dataset:{source:'first'}});assert.equal(h.db.books.get(id).status,'ready');assert.equal(h.db.meta.get('jigu-web-experience-v1').firstUsed,true);assert.equal(h.db.meta.get('jigu-experience-orders').items.length,1);
  await h.render('library');assert.match(h.node('#app').innerHTML,/我第一次跳水坑/);assert.match(h.node('#app').innerHTML,/已完成/);
  await h.render('account');assert.match(h.node('#app').innerHTML,/叽咕一会/);
  await h.render('home');assert.doesNotMatch(h.node('#app').innerHTML,/叽咕一会/);

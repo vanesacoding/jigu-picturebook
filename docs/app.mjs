@@ -1,16 +1,16 @@
 import {escapeHTML as esc,localDate} from './core.mjs';
-import {store,compressPhoto} from './storage.mjs';
-import {downloadPDF} from './pdf.mjs';
+import {store,compressPhoto,transaction} from './storage.mjs';
+import {downloadPDF} from './pdf.mjs?v=20261029-2';
 import {ART,EVENT,EXAMPLE_ANSWERS,SAMPLE,PLANS,storyInput,createStory,appendPhoto,complete,imageMap,generationProgress,GENERATION_MS,bookGroup} from './demo.mjs';
-import {composePage} from './pages.mjs';
-import {EXPERIENCE_ID,entitlement,availableBenefits,prepareDelivery,withWatermark} from './experience.mjs';
+import {composePage} from './pages.mjs?v=20261029-2';
+import {EXPERIENCE_ID,entitlement,availableBenefits,prepareDelivery,withWatermark} from './experience.mjs?v=20261029-2';
 const $=s=>document.querySelector(s),app=$('#app'),header=$('#header'),nav=$('#nav'),dialog=$('#dialog');
 const S={draft:null,book:null,books:[],current:0,filter:'all',urls:[],token:0,busy:false,jobs:new Map(),write:Promise.resolve(),timer:null};
 const DRAFT='prototype-composer-v1',uid=()=>crypto.randomUUID();
 const icon=n=>'<img class="icon" src="./assets/icons/'+n+'.svg" alt="" aria-hidden="true">';
 const route=()=>{const p=location.hash.replace(/^#\/?/,'').split('/');return{view:p[0]||'home',id:decodeURIComponent(p[1]||'')}};
 function go(view,id=''){location.hash='#/'+view+(id?'/'+encodeURIComponent(id):'')}
-function toast(t){$('#toast').textContent=t;$('#toast').hidden=false;clearTimeout(S.toast);S.toast=setTimeout(()=>$('#toast').hidden=true,3200)}
+function toast(t){if(dialog.open){let error=dialog.querySelector('.dialog-error');if(!error){error=document.createElement('p');error.className='dialog-error form-error';error.setAttribute('role','alert');dialog.append(error)}error.textContent=t;}$('#toast').textContent=t;$('#toast').hidden=false;clearTimeout(S.toast);S.toast=setTimeout(()=>$('#toast').hidden=true,3200)}
 function modal(title,body,footer='<button class="primary" data-action="close">知道了</button>'){dialog.innerHTML='<div class="modal-heading"><h2>'+esc(title)+'</h2><button class="icon-button" data-action="close" aria-label="关闭">'+icon('x')+'</button></div>'+body+'<div class="modal-footer">'+footer+'</div>';if(!dialog.open)dialog.showModal()}
 function close(){dialog.close()}
 function fresh(){return{id:DRAFT,input:{event:'',nickname:'',answers:{where:'',what:'',reaction:''}},count:5,storyPhotoId:null,photos:[],date:localDate(),updatedAt:Date.now()}}
@@ -99,7 +99,7 @@ function productsPage(){return `<section class="page products-page"><span class=
 async function deliverLocal(source){
  S.deliveryError=null;const bookId=S.book?.id;if(!bookId)throw Error('请先打开一本预览');
  // One IndexedDB transaction commits the book, entitlement, and experience order.
- await store.transaction(['books','meta'],'readwrite',tx=>{
+ await transaction(['books','meta'],'readwrite',tx=>{
   const books=tx.objectStore('books'),meta=tx.objectStore('meta');
   const rb=books.get(bookId),re=meta.get(EXPERIENCE_ID),ro=meta.get('jigu-experience-orders');
   ro.onsuccess=()=>{try{const result=prepareDelivery(rb.result,re.result,source);if(!result.order)return;books.put(result.book);meta.put(result.entitlement);meta.put({id:'jigu-experience-orders',items:[...(ro.result?.items||[]),result.order]});}catch(e){S.deliveryError=e;tx.abort();}};
@@ -108,7 +108,7 @@ async function deliverLocal(source){
 }
 async function pageFile(){const p=S.book.pages[S.current],url=S.pageURLs?.[p.image?.id]||p.art;if(!p.image)throw Error('请等这页画好后再保存');const canvas=await composePage(withWatermark(S.book,p),url),blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));if(!blob)throw Error('这一页没有保存成功，请再试一次');return new File([blob],(S.book.title||'叽咕插画').replace(/[\\/:*?"<>|]/g,'')+'-'+(S.current+1)+'.png',{type:'image/png'});}
 function downloadFile(file){const url=URL.createObjectURL(file);S.urls.push(url);modal('把这一页收好','<p>文件保留当前文字与预览水印状态。'+(S.book.pages[S.current].type==='photo'?'这一页包含真实照片，请选择合适的分享对象。':'')+'</p>','<a class="primary" href="'+esc(url)+'" download="'+esc(file.name)+'">保存这一页图片</a>');}
-async function removeLocalBook(id){const books=(await store.all('books')).filter(b=>b.id!==id),removed=await store.get('books',id),d=await draft();const keep=new Set([...books.flatMap(b=>(b.photos||[]).map(p=>p.id)),...(d.bookId===id?[]:d.photos.map(p=>p.id))]);await store.transaction(['books','photos','meta'],'readwrite',tx=>{tx.objectStore('books').delete(id);for(const p of removed?.photos||[])if(!keep.has(p.id))tx.objectStore('photos').delete(p.id);if(d.bookId===id)tx.objectStore('meta').put(fresh());});if(d.bookId===id)S.draft=fresh();}
+async function removeLocalBook(id){const books=(await store.all('books')).filter(b=>b.id!==id),removed=await store.get('books',id),d=await draft();const keep=new Set([...books.flatMap(b=>(b.photos||[]).map(p=>p.id)),...(d.bookId===id?[]:d.photos.map(p=>p.id))]);await transaction(['books','photos','meta'],'readwrite',tx=>{tx.objectStore('books').delete(id);for(const p of removed?.photos||[])if(!keep.has(p.id))tx.objectStore('photos').delete(p.id);if(d.bookId===id)tx.objectStore('meta').put(fresh());});if(d.bookId===id)S.draft=fresh();}
 Object.assign(actions,{
  async delivery(){const e=await experienceState(),benefits=availableBenefits(e).filter(x=>x.available);modal('收下这本成长小书','<p>确认后去除预览水印，并自动放进书架。当前为本机功能体验，不会使用微信权益或扣费。</p>'+(!benefits.length?'<p class="notice-card">本机首次体验已用完。可去权益页体验六天共读奖励；微信支付尚未开放。</p>':''),benefits.map(b=>'<button class="primary" data-action="claim-delivery" data-source="'+b.id+'">使用'+esc(b.label)+'</button>').join('')+'<button class="text-button wide" data-go="benefits">查看全部权益</button><button class="text-button wide" data-action="close">继续看看预览</button>');},
  async 'claim-delivery'(el){if(S.busy)return;busy(true);try{await deliverLocal(el.dataset.source)}catch(e){throw S.deliveryError||e}finally{busy(false)}},

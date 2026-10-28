@@ -1,6 +1,6 @@
-const CACHE='jigu-illustration-pwa-v9-miniapp-experience';
+const CACHE='jigu-illustration-pwa-v9-miniapp-experience-2';
 const ROOT=new URL('./',self.location).href;
-const FILES=['./','./index.html','./style.css?v=20261029','./app.mjs?v=20261029','./demo.mjs','./experience.mjs','./pages.mjs','./core.mjs','./storage.mjs','./pdf.mjs','./manifest.webmanifest','./assets/bird.webp','./assets/paint-bird.webp','./assets/puddle-story.jpg','./assets/puddle-walk.jpg','./assets/puddle-look.jpg','./assets/puddle-hug.jpg','./assets/icon-192.png','./assets/icon-512.png','./assets/maskable-512.png'];
+const FILES=['./','./index.html','./style.css?v=20261029-2','./app.mjs?v=20261029-2','./demo.mjs','./experience.mjs?v=20261029-2','./pages.mjs?v=20261029-2','./core.mjs','./storage.mjs','./pdf.mjs?v=20261029-2','./manifest.webmanifest','./assets/bird.webp','./assets/paint-bird.webp','./assets/puddle-story.jpg','./assets/puddle-walk.jpg','./assets/puddle-look.jpg','./assets/puddle-hug.jpg','./assets/icon-192.png','./assets/icon-512.png','./assets/maskable-512.png'];
 const ALLOWED=new Set(FILES.map(p=>new URL(p,ROOT).href));
 self.addEventListener('install',event=>event.waitUntil(caches.open(CACHE).then(cache=>cache.addAll(FILES)).then(()=>self.skipWaiting())));
 self.addEventListener('activate',event=>event.waitUntil((async()=>{for(const key of await caches.keys())if(key.startsWith('jigu-illustration-pwa-')&&key!==CACHE)await caches.delete(key);await self.clients.claim()})()));

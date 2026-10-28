@@ -1,4 +1,4 @@
-import {composePage} from './pages.mjs';
+import {composePage} from './pages.mjs?v=20261029-2';
 // Minimal image-only PDF writer. Captions are rasterized by the native canvas,
 // so Chinese survives PDF export without distributing font files.
 function bytes(s){const out=new Uint8Array(s.length);for(let i=0;i<s.length;i++)out[i]=s.charCodeAt(i)&255;return out}
