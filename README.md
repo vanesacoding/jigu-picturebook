@@ -1,3 +1,7 @@
+# 网页最新版本（2026-10-29）
+
+GitHub Pages 的 `docs/` 已迁移最新确认的小程序体验流程：5+1 页、水印预览、确认收书、首次免费/六天赠送的独立本机体验、制作记录、单页文件分享与 PDF。真实微信身份、生图、支付、云同步未接入此静态网页。详见 [PRODUCT_RULES.md](PRODUCT_RULES.md)。以下保留旧版本记录。
+
 # 叽咕插画
 
 当前网页版：[打开叽咕插画 PWA](https://vanesacoding.github.io/jigu-picturebook/)。可添加到手机桌面。
